@@ -2,14 +2,11 @@ const express = require('express');
 const routes = require('./routes');
 const http = require('http');
 const path = require('path');
-const mongoskin = require('mongoskin');
-const dbUrl = process.env.MONGOHQ_URL || 'mongodb://@localhost:27017/blog';
+const mongoose = require('mongoose');
+const models = require('./models');
 
-const db = mongoskin.db(dbUrl);
-const collections = {
-  articles: db.collection('articles'),
-  users: db.collection('users')
-}
+const dbUrl = process.env.MONGOHQ_URL || 'mongodb://@localhost:27017/blog';
+const db = mongoose.connect(dbUrl, { useNewUrlParser: true });
 
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -22,9 +19,10 @@ const app = express();
 app.locals.appTitle = 'blog-express';
 
 app.use((req, res, next) => {
-  if (!collections.articles || !collections.users)
-    return next(new Error('no collections.'));
-  req.collections = collections;
+  if (!models.Article || !models.User) {
+    return next(new Error('No models.'));
+  }
+  req.models = models;
   return next();
 });
 

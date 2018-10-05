@@ -30,7 +30,7 @@ var update = function(event) {
   var $tr = findTr(event);
   $tr.find('button').attr('disabled', 'disabled');
   var data = {
-    published: $tr.hasClass('unpublished');
+    published: $tr.hasClass('unpublished')
   }
   var id = $tr.attr('data-id');
   $.ajax({
